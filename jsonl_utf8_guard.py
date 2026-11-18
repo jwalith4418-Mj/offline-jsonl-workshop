@@ -111,8 +111,18 @@ def iter_jsonl_records(
                 f"Line {line_number}: invalid JSON"
             ) from exc
         if not isinstance(data, dict):
+            if data is None:
+                kind = "null"
+            elif isinstance(data, bool):
+                kind = "true" if data else "false"
+            elif isinstance(data, (int, float)):
+                kind = "a number"
+            elif isinstance(data, str):
+                kind = "a string"
+            else:
+                kind = "an array"
             raise JSONLValidationError(
-                f"Line {line_number}: expected a JSON object"
+                f"Line {line_number}: expected a JSON object, got {kind}"
             )
         yield data
 
